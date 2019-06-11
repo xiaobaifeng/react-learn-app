@@ -10,16 +10,23 @@ export default class FilterableProductTable extends Component {
     super(props);
     this.state = {
       sourceProducts: [],
-      products: []
+      products: [],
+      searchTxt: '',
+      onlyInStock: false
     }
     this.search = this.search.bind(this);
   }
 
-  search ({searchTxt, onlyInStock}) {
-    const lowerSearchTxt = searchTxt.toLowerCase()
+  search (query) {
+    const _query = Object.assign({
+      searchTxt: this.state.searchTxt,
+      onlyInStock: this.state.onlyInStock
+    }, query)
+    const lowerSearchTxt = _query.searchTxt.toLowerCase()
     this.setState({
+      ..._query,
       products: this.state.sourceProducts.filter(product => 
-        (product.category.toLowerCase().indexOf(lowerSearchTxt) > -1 || product.name.toLowerCase().indexOf(lowerSearchTxt) > -1) && (!onlyInStock || product.stocked)
+        (product.category.toLowerCase().indexOf(lowerSearchTxt) > -1 || product.name.toLowerCase().indexOf(lowerSearchTxt) > -1) && (!_query.onlyInStock || product.stocked)
       )
     })
   }
@@ -61,7 +68,7 @@ export default class FilterableProductTable extends Component {
 
     return (
       <div>
-        <SearchBar onSearch={this.search} />
+        <SearchBar searchTxt={this.state.searchTxt} onlyInStock={this.state.onlyInStock} onSearch={this.search} />
         <table>
           <tbody>
             <ProductTable colHeaders={['name', 'price']}/>
