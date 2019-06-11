@@ -18,23 +18,34 @@ export default class FilterableProductTable extends Component {
   constructor (props) {
     super(props);
     this.state = {
-      productCategoryList: data.reduce((categoryList, {category, price, stocked, name}) => {
-        if (!categoryList[category]) {
-          categoryList[category] = [
-            {price, stocked, name}
-          ]
-        } else {
-          categoryList[category] = categoryList[category].concat({price, stocked, name})
-        }
-        return categoryList
-      }, {})
+      products: data
     }
+    this.search = this.search.bind(this);
+  }
+
+  search ({searchTxt, onlyInStock}) {
+    const lowerSearchTxt = searchTxt.toLowerCase()
+    this.setState({
+      products: data.filter(product => 
+        (product.category.toLowerCase().indexOf(lowerSearchTxt) > -1 || product.name.toLowerCase().indexOf(lowerSearchTxt) > -1) && (!onlyInStock || product.stocked)
+      )
+    })
   }
 
   render() {
+    const productCategoryList = this.state.products.reduce((categoryList, {category, price, stocked, name}) => {
+      if (!categoryList[category]) {
+        categoryList[category] = [
+          {price, stocked, name}
+        ]
+      } else {
+        categoryList[category] = categoryList[category].concat({price, stocked, name})
+      }
+      return categoryList
+    }, {})
     let tableBody = [];
-    Object.keys(this.state.productCategoryList).forEach(category => {
-      const productRows = this.state.productCategoryList[category].map(product => 
+    Object.keys(productCategoryList).forEach(category => {
+      const productRows = productCategoryList[category].map(product => 
         (<ProductRow key={product.name} stocked={product.stocked} name={product.name} price={product.price} />)
       )
       tableBody.push(<ProductCategoryRow  key={category} title={category} />)
@@ -43,7 +54,7 @@ export default class FilterableProductTable extends Component {
 
     return (
       <div>
-        <SearchBar onChange=''/>
+        <SearchBar onSearch={this.search} />
         <table>
           <tbody>
             <ProductTable colHeaders={['name', 'price']}/>

@@ -16,14 +16,19 @@ export default class ProductCategoryRow extends Component {
     const value = target.type === 'checkbox' ? target.checked : target.value;
     const name = target.name;
 
-    this.setState({
-      [name]: value
+    this.setState((state) => {
+      const newState = Object.assign(state, {
+        [name]: value
+      })
+      this.props.onSearch(newState)
+      return newState
     });
   }
+
   render() {
     return (
       <div className="search-Bar">
-        <pre>{JSON.stringify(this.state)}</pre>
+        <div>{JSON.stringify(this.state)}</div>
         <div className="search-Bar__input">
           <input
             name="searchTxt"
