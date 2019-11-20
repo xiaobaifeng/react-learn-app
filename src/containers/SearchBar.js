@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import './SearchBar.css'
 
-export default class ProductCategoryRow extends Component {
-  constructor (props) {
+export default class SearchBar extends Component {
+  constructor(props) {
     super(props);
     this.handleInputChange = this.handleInputChange.bind(this);
   }
